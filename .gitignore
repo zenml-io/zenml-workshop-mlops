@@ -1,0 +1,8 @@
+.venv
+.ipynb_checkpoints
+.zenml
+artifacts/*
+models/*
+data/*
+__pycache__/*
+.zen
