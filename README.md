@@ -42,7 +42,7 @@ uv pip install -r requirements.txt
 # Initialize ZenML
 zenml init
 zenml login
-zenml integration install gcp github -y
+zenml integration install gcp github -y --uv
 zenml stack set zenml-workshop-local-stack
 ```
 
