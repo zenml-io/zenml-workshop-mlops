@@ -43,6 +43,7 @@ uv pip install -r requirements.txt
 zenml init
 zenml login
 zenml integration install gcp github -y
+zenml stack set zenml-workshop-local-stack
 ```
 
 ### 2. Explore the Traditional Workflow
@@ -75,11 +76,62 @@ Run through `workshop_notebook.ipynb` and identify:
 
 Work on `training_pipeline_scaffold.py`:
 
-### Activity 3: Convert to ZenML Inference Pipeline (25 minutes)
+### Activity 3: Create your production stack (10 minutes)
+
+Now that your pipeline ran locally, let's try running it on a remote orchestrator - to do this, you need to create a new stack:
+
+![Create Stack](assets/create_stack.png)
+
+Go for the Manual stack creation
+![Manual Stack Creation](assets/manual.png)
+
+Pick the orchestrator, artifact store, image builder and container registry.
+
+![Pick Components](assets/pick.png)
+
+Finally go into your Terminal and set this new stack with:
+
+```
+zenml stack set <STACK NAME>
+```
+
+Now run your training pipeline again, and see what happens.
+
+### Activity 4: Create a Run Template
+
+Congratulations, you have run your pipeline in the remote environment. You can now create what is called a `Run Template` in ZenML. You can read more about them [here](https://docs.zenml.io/concepts/templates)
+
+To create a run template, head on over to the dashboard and find the training pipeline that you just ran on your production stack.
+
+![Select Run](assets/select_run.png)
+
+Now just click on the "New Template" button on top, give it a name and create it.
+
+![Create New Template](assets/new_template.png)
+
+Congrats, you now have a Run Template. You can now tie this into larger workflows by calling the ZenML API. You can also go through the dashboard, change the configuration as needed, an run the template. 
+
+First navigate to the Run Templates section in your project ...
+
+![Select it](assets/select_template.png)
+
+... open your template ...
+
+![Open it](assets/click_button.png)
+
+.. and click on `Run Template`
+
+![Run it](assets/run_template.png)
+
+1) You can now adjust the step parameters
+2) ... and run it
+
+
+### Activity 5: Convert to ZenML Inference Pipeline (25 minutes)
 
 Work on `inference_pipeline_scaffold.py`:
 
-### Activity 4: Compare and Reflect (10 minutes)
+### Activity 6: Compare and Reflect (10 minutes)
 
 Run both approaches and discuss:
 - What's better about the ZenML version?
