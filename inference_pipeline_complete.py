@@ -142,5 +142,4 @@ if __name__ == "__main__":
     print("\nNext steps:")
     print("1. Modify training pipeline to save artifacts to Model Control Plane")
     print("2. Set up model staging (STAGING -> PRODUCTION)")
-    print("3. Add model monitoring and drift detection")
-    print("4. Schedule for regular batch processing")
+    print("3. Set up shared preprocessing step with training pipeline")
