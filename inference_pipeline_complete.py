@@ -100,20 +100,11 @@ def batch_inference(
     settings={
         "docker": DockerSettings(
             parent_image="europe-west3-docker.pkg.dev/zenml-workshop/zenml-436496/zenml@sha256:6fc236a9c95ca84033b06ee578d0c47db7a289404c640b96426c4641b63db576",
-            requirements=[
-                "pandas",
-                "numpy",
-                "scikit-learn",
-                "plotly",
-                "xgboost",
-                "lightgbm",
-                "pyarrow",
-                "fastparquet"
-            ],
+            requirements="requirements.txt",
             python_package_installer="uv",
             apt_packages=["libgomp1"],
             skip_build=True
-        ),
+        )
     },
 )
 def batch_inference_pipeline():

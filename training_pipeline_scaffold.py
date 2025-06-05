@@ -11,9 +11,10 @@ This scaffold provides the complete ZenML structure with:
 Users can progressively implement each function to build their ML pipeline.
 """
 
-from zenml import Model, pipeline, step
+from zenml import ArtifactConfig, Model, pipeline, step
 from zenml.config import DockerSettings
 from zenml.logger import get_logger
+from zenml.enums import ArtifactType
 
 import pandas as pd
 import numpy as np
@@ -99,12 +100,14 @@ def prepare_data(
 # =============================================================================
 
 @step
-def train_model(
+def train_rf_model(
     X_train: np.ndarray, 
     y_train: np.ndarray, 
     n_estimators: int = 100,
     random_state: int = 42
-) -> Annotated[RandomForestClassifier, "trained_model"]:
+) -> Annotated[
+    RandomForestClassifier, ArtifactConfig(name="lr_churn_model", artifact_type=ArtifactType.MODEL,)
+]:
     """Train a Random Forest classifier.
     
     TODO: Implement model training
@@ -187,7 +190,9 @@ def train_lr_model(
     y_train: np.ndarray, 
     n_estimators: int = 100,
     random_state: int = 42
-) -> Annotated[LogisticRegression, "trained_model"]:
+) -> Annotated[
+    LogisticRegression, ArtifactConfig(name="lr_churn_model", artifact_type=ArtifactType.MODEL,)
+]:
     """Train a Logistic Regression classifier.
     
     TODO: Implement model training
@@ -311,9 +316,7 @@ if __name__ == "__main__":
     print("🔍 Step 2: explore_data() - Data visualization") 
     print("⚙️  Step 3: prepare_data() - Data preprocessing")
     print("🤖 Step 4: train_model() - Model training")
-    print("📈 Step 5: train_multiple_models() - Multi-model training")
-    print("📋 Step 6: evaluate_model() - Model evaluation")
-    print("📊 Step 7: create_evaluation_report() - Advanced reporting")
+    print("📋 Step 5: evaluate_model() - Model evaluation")
     
     print("\n🎯 Key Learning Points:")
     print("✅ Each function has @step decorator")
@@ -329,5 +332,4 @@ if __name__ == "__main__":
     print("4. Check ZenML dashboard for artifacts")
     
     # Uncomment when implementation is complete:
-    # simple_training_pipeline()
     # training_pipeline()

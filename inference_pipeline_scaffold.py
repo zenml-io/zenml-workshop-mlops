@@ -41,7 +41,7 @@ def batch_inference(
     model=Model(
         name="ChurnPredictionModel",
         description="End-to-end pipeline for churn prediction.",
-        version=ModelStages.LATEST
+        version=ModelStages.LATEST  # This takes the latest model produced by the training pipeline
     ),
     settings={
         "docker": DockerSettings(

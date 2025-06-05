@@ -131,7 +131,25 @@ First navigate to the Run Templates section in your project ...
 
 Work on `inference_pipeline_scaffold.py`:
 
-### Activity 6: Compare and Reflect (10 minutes)
+### Activity 6: Promote model and make Inference Pipeline dependant on it
+
+As you can see here, the inference pipeline curently will always pick the latest trained model. 
+In a production setting we do not want this. We want to make sure we remain in control of which model
+is used.
+
+![Dependency on Latest](assets/LATEST.png)
+
+In order to promote your model, head on over to the frontend, find your model version of choice and promote it into Production.
+
+![Promote](assets/Promote.png)
+
+Now go ahead and change the Model version for the inference pipeline.
+
+![Dependency on production](assets/PRODUCTION.png)
+
+And voilà, you will now only use the chosen model version for inference, until you choose to promote another one.
+
+### Activity 7: Compare and Reflect (10 minutes)
 
 Run both approaches and discuss:
 - What's better about the ZenML version?
