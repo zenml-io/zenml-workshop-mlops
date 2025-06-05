@@ -3,6 +3,5 @@
 .zenml
 artifacts/*
 models/*
-data/*
 __pycache__/*
 .zen
