@@ -1,28 +1,32 @@
-# ZenML Pipeline Conversion Workshop
+# ZenML Timeseries Forecasting Workshop
 
-Convert traditional ML notebooks into production-ready ZenML pipelines! This workshop teaches you how to transform messy, unstructured ML code into clean, reproducible, and scalable MLOps workflows.
+Convert traditional ML approaches into production-ready ZenML pipelines for timeseries forecasting! This workshop teaches you how to build clean, reproducible, and scalable MLOps workflows specifically designed for companies that forecast demand across thousands of products.
 
 ## 🎯 Workshop Objectives
 
 By the end of this workshop, you will:
 
-- **Understand the problems** with traditional notebook-based ML workflows
-- **Learn ZenML fundamentals** including steps, pipelines, and artifacts
-- **Convert messy ML code** into clean, structured ZenML pipelines
-- **Implement both training and inference pipelines** with proper separation of concerns
-- **Experience the benefits** of MLOps best practices including versioning, tracking, and reproducibility
+- **Understand the problems** with traditional approaches to timeseries forecasting at scale
+- **Learn ZenML fundamentals** including steps, pipelines, and artifacts for forecasting
+- **Build clean, structured ZenML timeseries pipelines** from scratch
+- **Implement train-and-predict pipelines** with batch processing for multiple products
+- **Experience batch processing patterns** that scale from workshop demos to production environments
+- **Build forecast validation** with comprehensive metrics and reporting
 
 ## 📁 Workshop Structure
 
 ```
 workshop-scaffold/
 ├── 📊 data/
-│   ├── customer_churn.csv          # Sample dataset (generated)
-│   └── generate_sample_data.py     # Script to create dataset
-├── 📓 workshop_notebook.ipynb      # Traditional ML workflow (BEFORE)
-├── 🔧 training_pipeline_scaffold.py    # Training pipeline template (TODO)
-├── 🔮 inference_pipeline_scaffold.py   # Inference pipeline template (TODO)
+│   ├── customer_churn.csv          # Legacy sample dataset 
+│   └── generate_sample_data.py     # Legacy data generation script
+├── 🔧 training_pipeline_scaffold.py    # Timeseries pipeline template (TODO)
+├── ✅ training_pipeline_complete.py     # Complete timeseries solution (REFERENCE)
+├── 🛠️ utils.py                         # Timeseries visualization utilities
 ├── 📦 requirements.txt             # All necessary dependencies
+├── 🎨 assets/                      # Workshop screenshots and images
+├── 🗂️ artifacts/                   # Generated pipeline artifacts
+├── 🤖 models/                      # Legacy model files for reference
 └── 📖 README.md                   # This file
 ```
 
@@ -46,31 +50,36 @@ zenml integration install gcp github -y --uv
 zenml stack set zenml-workshop-local-stack
 ```
 
-### 2. Explore the Traditional Workflow
+### 2. Explore the Legacy Approach
 
-Open and run `workshop_notebook.ipynb` to see a typical data scientist's workflow:
+Check out the existing `models/` directory to see examples of traditional ML artifact management:
 
 ```bash
-# Start Jupyter
-jupyter notebook workshop_notebook.ipynb
+# Look at the legacy model files
+ls -la models/
+# model_final_v2_actually_final_BEST.pkl  # Poor versioning example
+# scaler_for_model_v2.pkl                 # Manual artifact management
+# model_info_v2.txt                       # Unstructured metadata
 ```
 
-**🔴 Notice the Problems:**
-- Hardcoded file paths
-- Mixed concerns in single cells
+**🔴 Notice the Problems with Traditional Timeseries Forecasting:**
+- Hardcoded product lists and parameters
+- Mixed feature engineering and modeling concerns  
 - Poor model versioning (`model_final_v2_actually_final_BEST.pkl`)
-- Manual preprocessing steps
-- No experiment tracking
-- Difficult to reproduce
+- No batch processing for multiple products
+- Manual artifact management
+- No forecast validation pipeline
+- Difficult to scale to thousands of products
 
 ## 📚 Workshop Activities
 
-### Activity 1: Analyze the Traditional Workflow (10 minutes)
+### Activity 1: Analyze the Legacy Approach (10 minutes)
 
-Run through `workshop_notebook.ipynb` and identify:
-- What could go wrong in production?
-- How hard would it be to collaborate on this code?
-- What happens when you need to retrain the model?
+Examine the existing `models/` and `artifacts/` directories and identify:
+- How would you manage forecasting for 100,000 products with this approach?
+- What happens when you need different forecast horizons for different products?  
+- How would you track which products have poor forecast accuracy?
+- How would you retrain models and maintain consistency?
 
 ### Activity 2: Convert to ZenML Training Pipeline (30 minutes)
 
@@ -127,100 +136,129 @@ First navigate to the Run Templates section in your project ...
 2) ... and run it
 
 
-### Activity 5: Convert to ZenML Inference Pipeline (25 minutes)
+### Activity 5: Scale the Batch Processing (15 minutes)
 
-Work on `inference_pipeline_scaffold.py`:
+Experiment with scaling parameters in the complete pipeline:
 
-### Activity 6: Promote model and make Inference Pipeline dependant on it
+```python
+# Workshop configuration
+timeseries_forecast_pipeline(
+    n_products=10,      # Try 20, 50
+    batch_size=5,       # Try 3, 7, 10
+    forecast_horizon=30 # Try 7, 14, 60
+)
+```
 
-As you can see here, the inference pipeline curently will always pick the latest trained model. 
-In a production setting we do not want this. We want to make sure we remain in control of which model
-is used.
+**Observe:**
+- How batch processing affects execution time
+- Which products have better/worse forecast accuracy
+- How validation metrics change with different parameters
 
-![Dependency on Latest](assets/LATEST.png)
+### Activity 6: Promote Model for Production Use
 
-In order to promote your model, head on over to the frontend, find your model version of choice and promote it into Production.
+In the ZenML dashboard, find your trained forecasting model and promote it to production:
 
 ![Promote](assets/Promote.png)
 
-Now go ahead and change the Model version for the inference pipeline.
-
-![Dependency on production](assets/PRODUCTION.png)
-
-And voilà, you will now only use the chosen model version for inference, until you choose to promote another one.
+This ensures you have control over which model version is used for forecasting, rather than always using the latest trained model.
 
 ### Activity 7: Compare and Reflect (10 minutes)
 
-Run both approaches and discuss:
-- What's better about the ZenML version?
-- How does artifact tracking work?
-- What would deployment look like?
+Compare the legacy approach with the ZenML pipeline:
+- How does batch processing improve scalability?
+- What's the benefit of comprehensive forecast validation?
+- How does artifact tracking work for timeseries features?
+- How would this deploy to production for 100,000+ products?
 
 ## 🏆 Key Learning Points
 
-### Traditional ML Workflow Problems
+### Traditional Timeseries Forecasting Problems
 
 | Problem | Example | Impact |
 |---------|---------|---------|
-| **Hardcoded Paths** | `pd.read_csv('data/file.csv')` | Breaks when files move |
-| **Mixed Concerns** | Training + evaluation in one cell | Hard to debug/modify |
-| **Poor Versioning** | `model_final_v2_BEST.pkl` | Can't track what changed |
-| **Manual Steps** | Copy-paste preprocessing | Inconsistent between train/inference |
-| **No Tracking** | Print statements for metrics | Can't compare experiments |
+| **No Batch Processing** | Process one product at a time | Doesn't scale to 100k products |
+| **Mixed Concerns** | Feature engineering + modeling in one script | Hard to debug individual products |
+| **Poor Versioning** | `model_final_v2_actually_final_BEST.pkl` | Can't track what changed between forecasts |
+| **Manual Artifact Management** | `scaler_for_model_v2.pkl` | Inconsistent preprocessing across products |
+| **No Forecast Validation** | Basic RMSE only | Can't identify which products are problematic |
+| **No Scalability** | Fixed single-product approach | Can't handle enterprise forecasting loads |
 
-### ZenML Solutions
+### ZenML Timeseries Solutions
 
-| ZenML Feature | Benefit |
+| ZenML Feature | Forecasting Benefit |
 |---------------|---------|
-| **Steps** | Single responsibility |
-| **Pipelines** | Clear workflow DAG |
-| **Artifacts** | Automatic versioning |
-| **Type Hints** | Better lineage tracking |
-| **Caching** | Skip unchanged steps |
+| **Batch Processing Steps** | Scale to thousands of products efficiently |
+| **Feature Engineering Pipeline** | Consistent lag/rolling features across all products |
+| **Metadata Logging** | Track MAE, RMSE, R² for each experiment |
+| **Artifact Versioning** | Automatic versioning of timeseries features and models |
+| **Train-and-Predict Pipeline** | No separate inference pipeline needed |
+| **Validation Steps** | Comprehensive forecast accuracy assessment |
 
 ## 🔍 Expected Outputs
 
 After completing the workshop:
 
-### ✅ Working Training Pipeline
-- Clean, modular steps
-- Automatic artifact storage
-- Experiment tracking
-- Reproducible runs
+### ✅ Working Timeseries Forecasting Pipeline
+- **Synthetic Data Generation**: 2 years of daily demand data for multiple products
+- **Feature Engineering**: Lag features, rolling averages, temporal features  
+- **Batch Processing**: Scalable product processing (5 products per batch in workshop)
+- **Forecast Validation**: Comprehensive metrics (MAE, RMSE, R², MAPE)
+- **Interactive Reports**: HTML dashboards with forecast visualizations
 
-### ✅ Working Inference Pipeline  
-- Consistent preprocessing
-- Model loading from registry
-- Batch prediction capability
-- Timestamped outputs
+### ✅ Production-Ready Patterns
+- **Scalable Architecture**: Ready for 100,000+ products with larger batch sizes
+- **Train-and-Predict**: Single pipeline that trains and immediately forecasts
+- **Validation Pipeline**: Post-prediction validation with detailed metrics
+- **Experiment Tracking**: All metrics logged for comparison
 
-### ✅ Better ML Practices
-- Version control friendly code
-- Easy collaboration
-- Production deployment ready
-- Monitoring capabilities
+### ✅ Better Forecasting Practices
+- **Batch Processing**: Handle large product catalogs efficiently
+- **Comprehensive Validation**: Multiple metrics to assess forecast quality
+- **Artifact Tracking**: Version control for timeseries models and features
+- **Production Scaling**: Clear path from workshop demo to enterprise deployment
 
 ## 🎓 Solutions
 
-If you get stuck, check the `solutions`
+If you get stuck, check the complete solution:
 
-- `training_pipeline_complete.py` - Fully implemented training pipeline
-- `inference_pipeline_complete.py` - Fully implemented inference pipeline
+- `training_pipeline_complete.py` - Fully implemented timeseries forecasting pipeline with batch processing
 
 ## 🚀 Running the Solutions
 
 ```bash
-# Run the complete training pipeline
+# Run the complete timeseries forecasting pipeline
 python training_pipeline_complete.py
-
-# Run the complete inference pipeline  
-python inference_pipeline_complete.py
 
 # View your pipeline runs
 zenml pipeline runs list
 
-# Explore artifacts
+# Explore artifacts (including forecast validation reports)
 zenml artifact list
+
+# Check interactive HTML reports in ZenML dashboard
+zenml up
+```
+
+**Expected Console Output:**
+```
+🚀 Starting timeseries forecasting pipeline for 10 products...
+📊 Generating timeseries data for 10 products...
+✅ Generated 7300 records for 10 products
+🔧 Preparing timeseries features...
+✅ Training data: 6570 records
+✅ Forecast data: 300 records
+🌲 Training demand forecasting model...
+✅ Demand forecasting model trained
+🔮 Generating batch predictions (batch size: 5)...
+  Processing batch 1/2: 5 products
+  Processing batch 2/2: 5 products
+✅ Completed 2 batches, 300 predictions generated
+📊 Validating predictions...
+📈 Validation Results:
+  MAE: 15.23
+  RMSE: 19.87
+  R²: 0.892
+  MAPE: 12.4%
 ```
 
 ## 🔧 ZenML Commands Reference

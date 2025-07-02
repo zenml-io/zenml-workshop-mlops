@@ -1,257 +1,259 @@
 """
-ZenML Training Pipeline Scaffold
-Progressive implementation template for converting notebook code to ZenML pipeline
+ZenML Timeseries Forecasting Pipeline - Scaffold
+Progressive implementation template for converting timeseries forecasting to ZenML pipeline.
 
-This scaffold provides the complete ZenML structure with:
-- All @step decorators in place
-- Proper type hints and annotations
-- Function signatures ready
+This scaffold provides the complete ZenML structure for timeseries forecasting with:
+- All @step decorators in place for timeseries workflow
+- Proper type hints and annotations for forecasting
+- Function signatures ready for batch prediction implementation
 - Implementation left as TODOs for learning
 
-Users can progressively implement each function to build their ML pipeline.
+Workshop participants can progressively implement each function to build their
+timeseries forecasting pipeline with batch processing.
 """
 
-from zenml import ArtifactConfig, Model, pipeline, step
+from zenml import ArtifactConfig, Model, pipeline, step, log_metadata
 from zenml.config import DockerSettings
 from zenml.logger import get_logger
 from zenml.enums import ArtifactType
+from zenml.types import HTMLString
 
 import pandas as pd
 import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from typing import Tuple, Annotated, Dict, Any
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from typing import Tuple, Annotated, Dict, Any, List
+from datetime import datetime, timedelta
 
 logger = get_logger(__name__)
 
 # =============================================================================
-# STEP 1: Basic Data Loading (Start Here!)
+# STEP 1: Timeseries Data Generation (Start Here!)
 # =============================================================================
 
 @step
-def load_data(url: str = "https://gist.githubusercontent.com/AlexejPenner/1dae173189a3e5f3671f178e3de97483/raw/customer_churn.csv") -> Annotated[pd.DataFrame, "raw_data"]:
-    """Load customer churn data from CSV.
+def generate_timeseries_data(n_products: int = 10) -> Annotated[pd.DataFrame, "timeseries_data"]:
+    """Generate synthetic timeseries data for forecasting demo.
     
-    TODO: Implement data loading logic
-    - Load CSV
+    TODO: Implement timeseries data generation
+    - Create 2 years of daily data (2022-01-01 to 2023-12-31)
+    - Generate data for multiple products with realistic patterns
+    - Include seasonality, trend, and noise
+    - Add temporal features (day_of_week, month, quarter, is_weekend)
     
     Args:
-        data_path: Path to the CSV file
+        n_products: Number of products to generate data for
 
     Returns:
-        DataFrame with customer churn data
+        DataFrame with timeseries data for multiple products
     """
-    logger.info(f"Loading data from {url}")
+    logger.info(f"Generating timeseries data for {n_products} products")
     
-    # TODO: Implement data loading
+    # TODO: Implement data generation
     # Hints:
-    # - Use pd.read_csv() with try/except
+    # - Use pd.date_range() for date range
+    # - Create base_demand + trend + seasonality + noise
+    # - Use np.sin() for seasonal patterns
+    # - Ensure non-negative demand values
+    # - Create product_id as 'PROD_001', 'PROD_002', etc.
     
     pass
 
 # =============================================================================
-# STEP 2: Data Preprocessing (Multi-output Step)
+# STEP 2: Timeseries Feature Engineering (Multi-output Step)
 # =============================================================================
 
 @step
-def prepare_data(
+def prepare_timeseries_features(
     df: pd.DataFrame,
-    test_size: float = 0.2,
-    random_state: int = 42
+    forecast_horizon: int = 30
 ) -> Tuple[
-    Annotated[np.ndarray, "X_train"],
-    Annotated[np.ndarray, "X_test"], 
-    Annotated[np.ndarray, "y_train"],
-    Annotated[np.ndarray, "y_test"],
-    Annotated[Dict[str, Any], "preprocessing_info"]
+    Annotated[pd.DataFrame, "training_data"],
+    Annotated[pd.DataFrame, "forecast_data"],
+    Annotated[StandardScaler, "scaler"],
+    Annotated[list, "feature_names"],
 ]:
-    """Prepare data for training with comprehensive preprocessing.
+    """Prepare timeseries data for training and forecasting.
     
-    TODO: Implement data preprocessing pipeline
-    - Drop customer_id column
-    - Encode categorical variables
-    - Split features and target
-    - Train/test split with stratification
-    - Scale numerical features
-    - Create preprocessing metadata
+    TODO: Implement timeseries feature engineering
+    - Create lag features (1, 7, 30 days) for each product
+    - Add rolling averages (7, 30 days)
+    - Split data into training and forecast periods
+    - Scale features using StandardScaler
+    - Handle NaN values from lag features
     
     Args:
-        df: Raw customer churn DataFrame
-        test_size: Fraction of data to use for testing
-        random_state: Random seed for reproducibility
+        df: Raw timeseries DataFrame
+        forecast_horizon: Number of days to forecast
 
     Returns:
-        Tuple of processed training/test data, scaler, and preprocessing info
+        Tuple of (training_data, forecast_data, scaler, feature_names)
     """
-    logger.info("Starting data preparation")
+    logger.info("Starting timeseries feature preparation")
     
-    # TODO: Implement preprocessing steps
+    # TODO: Implement feature engineering steps
     # Hints:
-    # - Use LabelEncoder for categorical variables
-    # - Use train_test_split with stratify parameter
-    # - Fit StandardScaler on training data only
-    # - Return detailed preprocessing_info dict
+    # - Process each product separately for lag features
+    # - Use .shift() for lag features
+    # - Use .rolling().mean() for rolling averages
+    # - Split based on cutoff_date = max_date - forecast_horizon
+    # - Fit scaler only on training data
+    # - Return feature_names list for modeling
     
     pass
 
 
 # =============================================================================
-# STEP 3: Single Model Training (Basic ML Step)  
+# STEP 3: Forecasting Model Training (ML Step)  
 # =============================================================================
 
 @step
-def train_rf_model(
-    X_train: np.ndarray, 
-    y_train: np.ndarray, 
-    n_estimators: int = 100,
-    random_state: int = 42
+def train_forecast_model(
+    training_data: pd.DataFrame, 
+    feature_names: list,
+    n_estimators: int = 100
 ) -> Annotated[
-    RandomForestClassifier, ArtifactConfig(name="lr_churn_model", artifact_type=ArtifactType.MODEL,)
+    RandomForestRegressor, ArtifactConfig(name="forecast_model", artifact_type=ArtifactType.MODEL,)
 ]:
-    """Train a Random Forest classifier.
+    """Train Random Forest model for demand forecasting.
     
-    TODO: Implement model training
-    - Create RandomForestClassifier with parameters
+    TODO: Implement forecasting model training
+    - Extract features and target from training_data
+    - Create RandomForestRegressor with appropriate parameters
     - Fit model on training data
-    - Add logging for training completion
+    - Calculate and log training metrics (MAE, R²)
     
     Args:
-        X_train: Training features
-        y_train: Training labels
+        training_data: Training dataset with features and target
+        feature_names: List of feature column names
         n_estimators: Number of trees in the forest
-        random_state: Random seed for reproducibility
 
     Returns:
-        Trained RandomForestClassifier model
+        Trained RandomForestRegressor model
     """
-    logger.info(f"Training Random Forest with {n_estimators} estimators")
+    logger.info(f"Training forecasting model with {n_estimators} estimators")
     
     # TODO: Implement model training
     # Hints:
-    # - Use RandomForestClassifier with n_jobs=-1
-    # - Set random_state for reproducibility
-    # - Call .fit() method
+    # - X_train = training_data[feature_names]
+    # - y_train = training_data['demand']
+    # - Use RandomForestRegressor with regression-specific parameters
+    # - Set n_jobs=-1 for parallel processing
+    # - Log training metrics with log_metadata()
     
     pass
 
 
 # =============================================================================
-# STEP 4: Model Evaluation (Metrics and Analysis)
+# STEP 4: Batch Prediction (Core Forecasting Step)
 # =============================================================================
 
 @step
-def evaluate_model(
-    model: RandomForestClassifier, 
-    X_test: np.ndarray, 
-    y_test: np.ndarray,
-    model_name: str = "RandomForest"
+def batch_predict(
+    model: RandomForestRegressor,
+    forecast_data: pd.DataFrame,
+    feature_names: list,
+    batch_size: int = 5
+) -> Annotated[pd.DataFrame, "batch_predictions"]:
+    """Generate batch predictions for multiple products.
+    
+    TODO: Implement batch prediction logic
+    - Split products into batches of specified size
+    - Process each batch separately (simulates production scaling)
+    - Make predictions for each batch
+    - Combine all predictions into single DataFrame
+    - Add batch_id for tracking
+    
+    Args:
+        model: Trained forecasting model
+        forecast_data: Data to forecast on
+        feature_names: List of feature column names
+        batch_size: Number of products per batch
+
+    Returns:
+        DataFrame with predictions for all products
+    """
+    logger.info(f"Generating batch predictions (batch size: {batch_size})")
+    
+    # TODO: Implement batch prediction
+    # Hints:
+    # - Get unique products: forecast_data['product_id'].unique()
+    # - Calculate n_batches = ceil(n_products / batch_size)
+    # - Loop through batches, filter data, make predictions
+    # - Add 'predicted_demand' and 'batch_id' columns
+    # - Use pd.concat() to combine all batch results
+    
+    pass
+
+# =============================================================================
+# STEP 5: Forecast Validation (Evaluation Step)
+# =============================================================================
+
+@step
+def validate_predictions(
+    predictions_df: pd.DataFrame
 ) -> Tuple[
-    Annotated[float, "accuracy"], 
-    Annotated[Dict[str, Any], "detailed_metrics"]
+    Annotated[Dict[str, Any], "validation_metrics"],
+    Annotated[str, "validation_summary"]
 ]:
-    """Evaluate a model and return comprehensive metrics.
+    """Validate forecast predictions and calculate metrics.
     
-    TODO: Implement model evaluation
-    - Make predictions on test data
-    - Calculate accuracy, precision, recall, f1-score
-    - Create confusion matrix
-    - Add feature importance if available
+    TODO: Implement forecast validation
+    - Calculate overall metrics: MAE, RMSE, R², MAPE
+    - Calculate per-product metrics
+    - Create validation summary report
+    - Log all metrics for tracking
     
     Args:
-        model: Trained model
-        X_test: Test features
-        y_test: Test labels
-        model_name: Name of the model for tracking
+        predictions_df: DataFrame with actual and predicted demand
 
     Returns:
-        Tuple of accuracy score and detailed metrics dictionary
+        Tuple of validation metrics dict and summary string
     """
-    logger.info(f"Evaluating {model_name} model")
+    logger.info("Validating forecast predictions")
     
-    # TODO: Implement model evaluation
+    # TODO: Implement validation logic
     # Hints:
-    # - Use model.predict() and model.predict_proba()
-    # - Use sklearn metrics: accuracy_score, classification_report
-    # - Include confusion_matrix and feature_importances
-    # - Structure results in detailed_metrics dict
+    # - Use sklearn.metrics for MAE, MSE, R²
+    # - Calculate MAPE: mean(abs((actual - predicted) / actual)) * 100
+    # - Loop through products for per-product metrics
+    # - Use log_metadata() to track all metrics
+    # - Create readable summary string
     
     pass
 
 # =============================================================================
-# OPTIONAL STEP 5: Advanced Model Comparison and Reporting
-# =============================================================================
-# * here we add a step to also train a Logistic Regression model
-# * then we can compare the two models and create a report
+# OPTIONAL STEP 6: Advanced Reporting and Visualization
 # =============================================================================
 
 @step
-def train_lr_model(
-    X_train: np.ndarray, 
-    y_train: np.ndarray, 
-    n_estimators: int = 100,
-    random_state: int = 42
-) -> Annotated[
-    LogisticRegression, ArtifactConfig(name="lr_churn_model", artifact_type=ArtifactType.MODEL,)
-]:
-    """Train a Logistic Regression classifier.
+def create_forecast_report(
+    predictions_df: pd.DataFrame,
+    validation_metrics: Dict[str, Any]
+) -> Annotated[HTMLString, "forecast_report"]:
+    """Create comprehensive forecast evaluation report with visualizations.
     
-    TODO: Implement model training
-    - Create Logistic Regression with parameters
-    - Fit model on training data
-    - Add logging for training completion
-    
-    Args:
-        X_train: Training features
-        y_train: Training labels
-        n_estimators: Number of trees in the forest
-        random_state: Random seed for reproducibility
-
-    Returns:
-        Trained RandomForestClassifier model
-    """
-    logger.info(f"Training Random Forest with {n_estimators} estimators")
-    
-    # TODO: Implement model training
-    # Hints:
-    # - Use RandomForestClassifier with n_jobs=-1
-    # - Set random_state for reproducibility
-    # - Call .fit() method
-    
-    pass
-
-@step
-def create_evaluation_report(
-    rf_model: RandomForestClassifier,
-    lr_model: LogisticRegression,
-    X_test: np.ndarray,
-    y_test: np.ndarray,
-    preprocessing_info: Dict[str, Any]
-) -> Annotated[str, "evaluation_report"]:
-    """Create comprehensive model evaluation report with visualizations.
-    
-    TODO: Create interactive model comparison report
-    - Evaluate both models
-    - Create comparison charts (accuracy, confusion matrices)
-    - Show feature importance plots
+    TODO: Create interactive forecast visualization report
+    - Plot actual vs predicted for each product
+    - Show batch processing results
+    - Include error distribution plots
     - Generate HTML report for dashboard
     
     Args:
-        rf_model: Trained Random Forest model
-        lr_model: Trained Logistic Regression model
-        X_test: Test features
-        y_test: Test labels
-        preprocessing_info: Information about data preprocessing
+        predictions_df: DataFrame with predictions and actuals
+        validation_metrics: Dictionary with validation metrics
         
     Returns:
-        HTML string containing comprehensive evaluation report
+        HTML string containing comprehensive forecast report
     """
-    logger.info("Creating comprehensive evaluation report")
+    logger.info("Creating forecast evaluation report")
     
-    # TODO: Implement evaluation report
+    # TODO: Implement forecast report
     # Hints:
-    # - Evaluate both models and compare results
-    # - Use plotly subplots for multiple charts
-    # - Include model comparison table in HTML
+    # - Use plotly for interactive charts
+    # - Create subplots for multiple products
+    # - Include metrics summary table
     # - Return fig.to_html() + metrics_html
     
     pass
@@ -264,8 +266,8 @@ def create_evaluation_report(
 @pipeline(
     enable_cache=False,
     model=Model(
-        name="ChurnPredictionModel",
-        description="End-to-end pipeline for churn prediction.",
+        name="TimeseriesForecastModel",
+        description="End-to-end timeseries forecasting pipeline with batch prediction.",
     ),
     settings={
         "docker": DockerSettings(
@@ -275,61 +277,46 @@ def create_evaluation_report(
         ),
     },
 )
-def training_pipeline(
+def timeseries_forecast_pipeline(
+    n_products: int = 10,
     n_estimators: int = 100,
-    test_size: float = 0.2,
+    batch_size: int = 5,
+    forecast_horizon: int = 30,
     create_reports: bool = True
 ) -> None:
-    """Complete ML training pipeline demonstrating ZenML capabilities.
+    """Complete timeseries forecasting pipeline with batch prediction.
     
-    TODO: Connect all steps to create the pipeline
-    - Call steps in correct order
+    TODO: Connect all steps to create the forecasting pipeline
+    - Call steps in correct order for timeseries workflow
     - Pass outputs as inputs to next steps
     - Use conditional logic for optional reports
+    - Implement train-and-predict pattern (no separate inference)
     
     Args:
-        data_path: Path to the training data
+        n_products: Number of products to forecast (workshop: 10, production: 100,000)
         n_estimators: Number of trees for Random Forest
-        test_size: Fraction of data for testing
+        batch_size: Products per batch (workshop: 5, production: 1000+)
+        forecast_horizon: Days to forecast ahead
         create_reports: Whether to create detailed HTML reports
     """
     # TODO: Implement pipeline by connecting steps
     # Hints:
-    # - Start with: data = load_data(data_path)
-    # - Chain step outputs to inputs: X_train, X_test, y_train, y_test, scaler, preprocessing_info = prepare_data(data)
-    # - use optional steps if needed
-    # - Each step output becomes input to next step
+    # - Start with: data = generate_timeseries_data(n_products)
+    # - Chain step outputs to inputs for timeseries workflow
+    # - training_data, forecast_data, scaler, features = prepare_timeseries_features(data)
+    # - model = train_forecast_model(training_data, features, n_estimators)
+    # - predictions = batch_predict(model, forecast_data, features, batch_size)
+    # - metrics, summary = validate_predictions(predictions)
+    # - Use if create_reports: for optional reporting
     
     pass
 
 if __name__ == "__main__":
-    print("🚀 ZenML Training Pipeline Scaffold")
-    print("=" * 50)
-    print("\n📚 Progressive Implementation Guide:")
-    print("1. Start with simple_training_pipeline()")
-    print("2. Implement each @step function one by one")
-    print("3. Test individual steps before connecting them")
-    print("4. Move to full training_pipeline() with reports")
-    
-    print("\n✨ Implementation Order:")
-    print("📊 Step 1: load_data() - Basic data loading")
-    print("🔍 Step 2: explore_data() - Data visualization") 
-    print("⚙️  Step 3: prepare_data() - Data preprocessing")
-    print("🤖 Step 4: train_model() - Model training")
-    print("📋 Step 5: evaluate_model() - Model evaluation")
-    
-    print("\n🎯 Key Learning Points:")
-    print("✅ Each function has @step decorator")
-    print("✅ Type hints with Annotated for artifact naming")
-    print("✅ Multi-output steps return Tuples")
-    print("✅ Pipeline connects step outputs to inputs")
-    print("✅ Automatic artifact versioning and caching")
-    
-    print("\n🚀 Next Steps:")
-    print("1. Implement load_data() function first")
-    print("2. Test with: simple_training_pipeline()")
-    print("3. Add one step at a time and test")
-    print("4. Check ZenML dashboard for artifacts")
-    
+
     # Uncomment when implementation is complete:
-    # training_pipeline()
+    timeseries_forecast_pipeline(
+    #     n_products=10,
+    #     batch_size=5,
+    #     n_estimators=100,
+    #     forecast_horizon=30
+    )
