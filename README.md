@@ -17,16 +17,11 @@ By the end of this workshop, you will:
 
 ```
 workshop-scaffold/
-├── 📊 data/
-│   ├── customer_churn.csv          # Legacy sample dataset 
-│   └── generate_sample_data.py     # Legacy data generation script
 ├── 🔧 training_pipeline_scaffold.py    # Timeseries pipeline template (TODO)
 ├── ✅ training_pipeline_complete.py     # Complete timeseries solution (REFERENCE)
 ├── 🛠️ utils.py                         # Timeseries visualization utilities
 ├── 📦 requirements.txt             # All necessary dependencies
 ├── 🎨 assets/                      # Workshop screenshots and images
-├── 🗂️ artifacts/                   # Generated pipeline artifacts
-├── 🤖 models/                      # Legacy model files for reference
 └── 📖 README.md                   # This file
 ```
 
@@ -73,19 +68,12 @@ ls -la models/
 
 ## 📚 Workshop Activities
 
-### Activity 1: Analyze the Legacy Approach (10 minutes)
 
-Examine the existing `models/` and `artifacts/` directories and identify:
-- How would you manage forecasting for 100,000 products with this approach?
-- What happens when you need different forecast horizons for different products?  
-- How would you track which products have poor forecast accuracy?
-- How would you retrain models and maintain consistency?
-
-### Activity 2: Convert to ZenML Training Pipeline (30 minutes)
+### Activity 1: Create a ZenML Training Pipeline (30 minutes)
 
 Work on `training_pipeline_scaffold.py`:
 
-### Activity 3: Create your production stack (10 minutes)
+### Activity 2: Switch to your production stack (10 minutes)
 
 Now that your pipeline ran locally, let's try running it on a remote orchestrator - to do this, you need to create a new stack:
 
@@ -106,7 +94,7 @@ zenml stack set <STACK NAME>
 
 Now run your training pipeline again, and see what happens.
 
-### Activity 4: Create a Run Template
+### Activity 3: Create a Run Template
 
 Congratulations, you have run your pipeline in the remote environment. You can now create what is called a `Run Template` in ZenML. You can read more about them [here](https://docs.zenml.io/concepts/templates)
 
@@ -136,7 +124,7 @@ First navigate to the Run Templates section in your project ...
 2) ... and run it
 
 
-### Activity 5: Scale the Batch Processing (15 minutes)
+### Activity 4: Scale the Batch Processing (15 minutes)
 
 Experiment with scaling parameters in the complete pipeline:
 
@@ -162,13 +150,6 @@ In the ZenML dashboard, find your trained forecasting model and promote it to pr
 
 This ensures you have control over which model version is used for forecasting, rather than always using the latest trained model.
 
-### Activity 7: Compare and Reflect (10 minutes)
-
-Compare the legacy approach with the ZenML pipeline:
-- How does batch processing improve scalability?
-- What's the benefit of comprehensive forecast validation?
-- How does artifact tracking work for timeseries features?
-- How would this deploy to production for 100,000+ products?
 
 ## 🏆 Key Learning Points
 
