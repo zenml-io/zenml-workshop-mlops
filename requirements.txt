@@ -2,6 +2,9 @@
 # Core ZenML framework
 zenml>=0.83.0
 
+# Github integration
+pygithub>=2.1.0
+
 # Core ML libraries
 pandas>=1.5.0
 numpy>=1.21.0

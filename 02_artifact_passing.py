@@ -105,7 +105,7 @@ if __name__ == "__main__":
     training_pipeline()
 
     latest_model = Model(name="SimpleModel", version=ModelStages.LATEST)
-    latest_model.set_stage(stage=ModelStages.PRODUCTION)
+    latest_model.set_stage(stage=ModelStages.PRODUCTION, force=True)
 
     # Then, run the inference pipeline to use the artifacts
     print("\nRunning inference pipeline...")
