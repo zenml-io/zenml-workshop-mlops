@@ -130,16 +130,20 @@ def basic_ml_pipeline() -> float:
 
 if __name__ == "__main__":
     # Run the pipeline
-    # basic_ml_pipeline()
+    basic_ml_pipeline()
 
-    # Run the pipeline with a different configuration
-    basic_ml_pipeline.with_options( 
-        settings={  
-            "docker": DockerSettings(
-                requirements="requirements.txt",
-                python_package_installer="uv"
-            )
-        },
-        enable_cache=False
-    )()
+    # Run the pipeline on a remote stack
+
+    # switch to remote stack like this from your terminal:
+    # zenml stack set zenml-workshop-stack
+    
+    # basic_ml_pipeline.with_options( 
+    #    settings={  
+    #        "docker": DockerSettings(
+    #             parent_image="europe-west3-docker.pkg.dev/zenml-workshop/zenml-436496/zenml@sha256:d4d0e1c128d1848fccfc3b884a803e4eaaa259ea31426799b5ed52ec87860ac4",
+    #             skip_build=True
+    #         )
+    #     },
+    #     enable_cache=False
+    # )()
     

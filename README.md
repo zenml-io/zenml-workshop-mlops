@@ -25,6 +25,25 @@ python 02_artifact_passing.py
 zenml integration install gcp --uv
 ```
 
+For pipelines running on the zenml-workshop-stack
+```python
+# Use these settings in case you want to skip building
+settings={  
+    "docker": DockerSettings(
+        parent_image="europe-west3-docker.pkg.dev/zenml-workshop/zenml-436496/zenml@sha256:d4d0e1c128d1848fccfc3b884a803e4eaaa259ea31426799b5ed52ec87860ac4",
+        skip_build=True
+    )
+},
+
+# use these settings to build fast
+settings={  
+    "docker": DockerSettings(
+        requirements="requirements.txt",
+        python_package_installer="uv"
+    )
+},
+```
+
 ## Workshop Examples
 
 ### 01_basic_pipeline.py
