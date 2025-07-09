@@ -101,7 +101,7 @@ def evaluate_model(
     return accuracy
 
 
-@pipeline()
+@pipeline(enable_cache=False)
 def basic_ml_pipeline() -> float:
     """
     A basic machine learning pipeline that demonstrates:
