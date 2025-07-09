@@ -1,334 +1,102 @@
-# ZenML Timeseries Forecasting Workshop
+# ZenML Workshop: MLOps Best Practices
 
-Convert traditional ML approaches into production-ready ZenML pipelines for timeseries forecasting! This workshop teaches you how to build clean, reproducible, and scalable MLOps workflows specifically designed for companies that forecast demand across thousands of products.
+A hands-on workshop demonstrating ZenML patterns and best practices for production ML pipelines.
 
-## 🎯 Workshop Objectives
-
-By the end of this workshop, you will:
-
-- **Understand the problems** with traditional approaches to timeseries forecasting at scale
-- **Learn ZenML fundamentals** including steps, pipelines, and artifacts for forecasting
-- **Build clean, structured ZenML timeseries pipelines** from scratch
-- **Implement train-and-predict pipelines** with batch processing for multiple products
-- **Experience batch processing patterns** that scale from workshop demos to production environments
-- **Build forecast validation** with comprehensive metrics and reporting
-
-## 📁 Workshop Structure
-
-```
-workshop-scaffold/
-├── 🔧 training_pipeline_scaffold.py    # Timeseries pipeline template (TODO)
-├── ✅ training_pipeline_complete.py     # Complete timeseries solution (REFERENCE)
-├── 🛠️ utils.py                         # Timeseries visualization utilities
-├── 📦 requirements.txt             # All necessary dependencies
-├── 🎨 assets/                      # Workshop screenshots and images
-└── 📖 README.md                   # This file
-```
-
-## 🚀 Getting Started
-
-### 1. Environment Setup
+## Quick Start Commands
 
 ```bash
-# Create a virtual environment (recommended)
-python -m venv .venv
-source .venv/bin/activate  # On Windows: venv\Scripts\activate
+# Create virtual env and install requirements
 
-# Install dependencies
-pip install uv
-uv pip install -r requirements.txt
 
-# Initialize ZenML
-zenml init
-zenml login
-zenml integration install gcp github -y --uv
-zenml stack set zenml-workshop-local-stack
-```
-
-### 2. Explore the Legacy Approach
-
-Check out the existing `models/` directory to see examples of traditional ML artifact management:
-
-```bash
-# Look at the legacy model files
-ls -la models/
-# model_final_v2_actually_final_BEST.pkl  # Poor versioning example
-# scaler_for_model_v2.pkl                 # Manual artifact management
-# model_info_v2.txt                       # Unstructured metadata
-```
-
-**🔴 Notice the Problems with Traditional Timeseries Forecasting:**
-- Hardcoded product lists and parameters
-- Mixed feature engineering and modeling concerns  
-- Poor model versioning (`model_final_v2_actually_final_BEST.pkl`)
-- No batch processing for multiple products
-- Manual artifact management
-- No forecast validation pipeline
-- Difficult to scale to thousands of products
-
-## 📚 Workshop Activities
-
-
-### Activity 1: Create a ZenML Training Pipeline (30 minutes)
-
-Work on `training_pipeline_scaffold.py`:
-
-### Activity 2: Switch to your production stack (10 minutes)
-
-Now that your pipeline ran locally, let's try running it on a remote orchestrator - to do this, you need to create a new stack:
-
-![Create Stack](assets/create_stack.png)
-
-Go for the Manual stack creation
-![Manual Stack Creation](assets/manual.png)
-
-Pick the orchestrator, artifact store, image builder and container registry.
-
-![Pick Components](assets/pick.png)
-
-Finally go into your Terminal and set this new stack with:
-
-```
-zenml stack set <STACK NAME>
-```
-
-Now run your training pipeline again, and see what happens.
-
-### Activity 3: Create a Run Template
-
-Congratulations, you have run your pipeline in the remote environment. You can now create what is called a `Run Template` in ZenML. You can read more about them [here](https://docs.zenml.io/concepts/templates)
-
-To create a run template, head on over to the dashboard and find the training pipeline that you just ran on your production stack.
-
-![Select Run](assets/select_run.png)
-
-Now just click on the "New Template" button on top, give it a name and create it.
-
-![Create New Template](assets/new_template.png)
-
-Congrats, you now have a Run Template. You can now tie this into larger workflows by calling the ZenML API. You can also go through the dashboard, change the configuration as needed, an run the template. 
-
-First navigate to the Run Templates section in your project ...
-
-![Select it](assets/select_template.png)
-
-... open your template ...
-
-![Open it](assets/click_button.png)
-
-.. and click on `Run Template`
-
-![Run it](assets/run_template.png)
-
-1) You can now adjust the step parameters
-2) ... and run it
-
-
-### Activity 4: Scale the Batch Processing (15 minutes)
-
-Experiment with scaling parameters in the complete pipeline:
-
-```python
-# Workshop configuration
-timeseries_forecast_pipeline(
-    n_products=10,      # Try 20, 50
-    batch_size=5,       # Try 3, 7, 10
-    forecast_horizon=30 # Try 7, 14, 60
-)
-```
-
-**Observe:**
-- How batch processing affects execution time
-- Which products have better/worse forecast accuracy
-- How validation metrics change with different parameters
-
-### Activity 6: Promote Model for Production Use
-
-In the ZenML dashboard, find your trained forecasting model and promote it to production:
-
-![Promote](assets/Promote.png)
-
-This ensures you have control over which model version is used for forecasting, rather than always using the latest trained model.
-
-
-## 🏆 Key Learning Points
-
-### Traditional Timeseries Forecasting Problems
-
-| Problem | Example | Impact |
-|---------|---------|---------|
-| **No Batch Processing** | Process one product at a time | Doesn't scale to 100k products |
-| **Mixed Concerns** | Feature engineering + modeling in one script | Hard to debug individual products |
-| **Poor Versioning** | `model_final_v2_actually_final_BEST.pkl` | Can't track what changed between forecasts |
-| **Manual Artifact Management** | `scaler_for_model_v2.pkl` | Inconsistent preprocessing across products |
-| **No Forecast Validation** | Basic RMSE only | Can't identify which products are problematic |
-| **No Scalability** | Fixed single-product approach | Can't handle enterprise forecasting loads |
-
-### ZenML Timeseries Solutions
-
-| ZenML Feature | Forecasting Benefit |
-|---------------|---------|
-| **Batch Processing Steps** | Scale to thousands of products efficiently |
-| **Feature Engineering Pipeline** | Consistent lag/rolling features across all products |
-| **Metadata Logging** | Track MAE, RMSE, R² for each experiment |
-| **Artifact Versioning** | Automatic versioning of timeseries features and models |
-| **Train-and-Predict Pipeline** | No separate inference pipeline needed |
-| **Validation Steps** | Comprehensive forecast accuracy assessment |
-
-## 🔍 Expected Outputs
-
-After completing the workshop:
-
-### ✅ Working Timeseries Forecasting Pipeline
-- **Synthetic Data Generation**: 2 years of daily demand data for multiple products
-- **Feature Engineering**: Lag features, rolling averages, temporal features  
-- **Batch Processing**: Scalable product processing (5 products per batch in workshop)
-- **Forecast Validation**: Comprehensive metrics (MAE, RMSE, R², MAPE)
-- **Interactive Reports**: HTML dashboards with forecast visualizations
-
-### ✅ Production-Ready Patterns
-- **Scalable Architecture**: Ready for 100,000+ products with larger batch sizes
-- **Train-and-Predict**: Single pipeline that trains and immediately forecasts
-- **Validation Pipeline**: Post-prediction validation with detailed metrics
-- **Experiment Tracking**: All metrics logged for comparison
-
-### ✅ Better Forecasting Practices
-- **Batch Processing**: Handle large product catalogs efficiently
-- **Comprehensive Validation**: Multiple metrics to assess forecast quality
-- **Artifact Tracking**: Version control for timeseries models and features
-- **Production Scaling**: Clear path from workshop demo to enterprise deployment
-
-## 🎓 Solutions
-
-If you get stuck, check the complete solution:
-
-- `training_pipeline_complete.py` - Fully implemented timeseries forecasting pipeline with batch processing
-
-## 🚀 Running the Solutions
-
-```bash
-# Run the complete timeseries forecasting pipeline
-python training_pipeline_complete.py
-
-# View your pipeline runs
-zenml pipeline runs list
-
-# Explore artifacts (including forecast validation reports)
-zenml artifact list
-
-# Check interactive HTML reports in ZenML dashboard
-zenml up
-```
-
-**Expected Console Output:**
-```
-🚀 Starting timeseries forecasting pipeline for 10 products...
-📊 Generating timeseries data for 10 products...
-✅ Generated 7300 records for 10 products
-🔧 Preparing timeseries features...
-✅ Training data: 6570 records
-✅ Forecast data: 300 records
-🌲 Training demand forecasting model...
-✅ Demand forecasting model trained
-🔮 Generating batch predictions (batch size: 5)...
-  Processing batch 1/2: 5 products
-  Processing batch 2/2: 5 products
-✅ Completed 2 batches, 300 predictions generated
-📊 Validating predictions...
-📈 Validation Results:
-  MAE: 15.23
-  RMSE: 19.87
-  R²: 0.892
-  MAPE: 12.4%
-```
-
-## 🔧 ZenML Commands Reference
-
-```bash
-# Initialize ZenML
-zenml init
-
-# Login to ZenML
+# Authentication
 zenml login
 
-# Set ZenML Stack
-zenml stack set zenml-workshop-stack
+# Stack Configuration
+zenml stack set default                          # Full local execution
+zenml stack set zenml-workshop-local-stack      # Remote artifact tracking (recommended)
+zenml stack set zenml-workshop-stack            # Full remote execution
 
-# View pipelines
-zenml pipeline list
+# Run Examples
+python 01_basic_pipeline.py
+python 02_artifact_passing.py
+# ... etc
 
-# View pipeline runs
-zenml pipeline runs list
-
-# View artifacts
-zenml artifact list
-
-# View models
-zenml model list
-
-# Start ZenML dashboard
-zenml up
+# For Remote stacks install stack requirements - e.g:
+zenml integration install gcp --uv
 ```
 
-## 📈 Next Steps After Workshop
+## Workshop Examples
 
-1. **Add More Steps**: Data validation, feature engineering, model comparison
-2. **Integrate MLflow**: For enhanced experiment tracking
-3. **Add Deployment**: Using ZenML's deployment capabilities
-4. **Set Up Monitoring**: Track model performance over time
-5. **Cloud Integration**: Deploy to AWS, GCP, or Azure
-6. **Team Collaboration**: Share pipelines and artifacts
+### 01_basic_pipeline.py
+**Learn:** Core ZenML concepts - steps, pipelines, and artifacts
+- Basic step and pipeline decorators
+- Artifact typing with `Annotated`
+- Simple ML workflow structure
 
-## 💡 Production Considerations
+### 02_artifact_passing.py  
+**Learn:** Model Control Plane for artifact management
+- Passing artifacts between pipelines
+- Using `get_step_context()` and `Client()`
+- Model versioning and stage promotion
 
-### For Real-World Usage:
+### 03_materialization.py
+**Learn:** Custom artifact storage and visualization
+- Creating custom materializers for data types
+- Adding rich metadata and visualizations
+- Controlling how artifacts are stored/loaded
 
-**Data Validation**
-```python
-@step
-def validate_data(df: pd.DataFrame) -> pd.DataFrame:
-    # Check schema, data quality, distributions
-    return df
-```
+### 04_config_files.py
+**Learn:** External configuration and caching
+- Using YAML files to configure pipelines
+- Pipeline parameters vs step parameters
+- Caching strategies for development vs production
 
-**Model Monitoring**
-```python
-@step  
-def monitor_predictions(predictions: pd.DataFrame) -> dict:
-    # Track prediction distributions, detect drift
-    return monitoring_metrics
-```
+### 05_metadata_tracking.py
+**Learn:** Experiment tracking and comparison
+- Logging metadata with `log_metadata()`
+- Tracking metrics across different runs
+- Creating comparable experiments for the dashboard
 
-**A/B Testing**
-```python
-@step
-def compare_models(model_a: Model, model_b: Model) -> Model:
-    # Statistical comparison, champion/challenger
-    return best_model
-```
+### 06_run_templates.py
+**Learn:** Standardizing pipeline execution
+- Creating reusable pipeline templates
+- Dashboard vs programmatic template execution
+- Template configuration and parameter management
 
-## 🆘 Troubleshooting
+### 07_advanced_patterns.py
+**Learn:** Configuration validation pattern
+- Centralized parameter validation in first step
+- Returning individual validated parameters as tuples
+- Ideal pattern for run templates with business rules
 
-**Common Issues:**
+### 08_antipatterns.py
+**Learn:** Common mistakes to avoid
+- Why step outputs are "promises" not values
+- Cannot use step outputs in conditionals or loops
+- Pipeline functions run client-side at definition time
 
-1. **Import Errors**: Make sure you've installed all requirements
-2. **File Not Found**: Run the data generation script first
-3. **ZenML Not Initialized**: Run `zenml init`
-4. **Permission Errors**: Check file permissions in working directory
+### 09_dynamic_pipelines.py
+**Learn:** Working within ZenML's execution model
+- Fan-out/fan-in pattern for parallel processing
+- Handling conditionals inside steps, not pipelines
+- Dynamic step creation based on pipeline parameters
 
-**Getting Help:**
-- ZenML Documentation: https://docs.zenml.io/
-- ZenML Discord: https://zenml.io/slack-invite
-- GitHub Issues: https://github.com/zenml-io/zenml/issues
+## Key Concepts
 
-## 🎉 Workshop Completion
+- **Steps**: Individual processing units with inputs/outputs
+- **Pipelines**: Orchestrated workflows of connected steps  
+- **Artifacts**: Versioned, typed data objects between steps
+- **Materializers**: Control how artifacts are stored/loaded
+- **Model Control Plane**: Manage model versions and promotion
+- **Run Templates**: Standardized, configurable pipeline executions
 
-Congratulations! You've learned how to:
+## Learn More
 
-✅ Identify problems in traditional ML workflows  
-✅ Structure ML code using ZenML steps and pipelines  
-✅ Implement artifact versioning and experiment tracking  
-✅ Create production-ready training and inference pipelines  
-✅ Experience the benefits of MLOps best practices  
+📚 **Complete Documentation:** https://docs.zenml.io/
 
-**Keep learning**: Try applying these concepts to your own ML projects! 
+The official docs provide comprehensive guides on:
+- Advanced orchestration patterns
+- Integration with ML tools (MLflow, Kubeflow, etc.)
+- Production deployment strategies
+- Stack component configuration
+- Enterprise features and best practices

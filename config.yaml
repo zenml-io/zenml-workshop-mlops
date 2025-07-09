@@ -1,0 +1,14 @@
+# Simple ZenML Configuration
+enable_cache: true
+
+steps:
+  create_data:
+    parameters:
+      size: 500
+    enable_cache: true
+  
+  process_data:
+    parameters:
+      multiply_by: 5.0
+      add_column: false
+    enable_cache: false

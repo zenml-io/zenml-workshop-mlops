@@ -1,31 +1,23 @@
 # ZenML Workshop Requirements
+# Core ZenML framework
+zenml>=0.83.0
+
 # Core ML libraries
 pandas>=1.5.0
 numpy>=1.21.0
 scikit-learn>=1.1.0
-xgboost>=1.6.0
-lightgbm>=3.3.0
 
-# Visualization
+# Visualization and reporting
+plotly>=5.15.0  # For interactive visualizations in materialization examples
 matplotlib>=3.5.0
 seaborn>=0.11.0
-plotly>=5.15.0  # For interactive visualizations
 
-# ZenML and MLOps
-zenml>=0.83.0
+# Data processing and serialization
+pyarrow>=10.0.0  # For parquet support in custom materializers
+fastparquet>=0.8.0  # Additional parquet support
 
-# Jupyter for notebook support
-jupyter>=1.0.0
-ipykernel>=6.0.0
-
-# Data processing utilities
-pyarrow>=10.0.0  # For efficient data serialization
-fastparquet>=0.8.0  # For parquet file support
-
-# HTML and reporting
+# HTML and reporting (for materialization examples)
 jinja2>=3.1.0  # For HTML template rendering
 
 # Development utilities
-ruff>=0.1.0 
-
-
+ruff>=0.1.0  # For code formatting and linting
