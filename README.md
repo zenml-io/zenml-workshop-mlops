@@ -30,7 +30,7 @@ For pipelines running on the zenml-workshop-stack
 # Use these settings in case you want to skip building
 settings={  
     "docker": DockerSettings(
-        parent_image="europe-west3-docker.pkg.dev/zenml-workshop/zenml-436496/zenml@sha256:d4d0e1c128d1848fccfc3b884a803e4eaaa259ea31426799b5ed52ec87860ac4",
+        parent_image="europe-west3-docker.pkg.dev/zenml-workshop/zenml-436496/zenml@sha256:df4ed1b5276e752aedb0957c942ecbea6c18ecff18b6d26abe29103939d50f5d",
         skip_build=True
     )
 },

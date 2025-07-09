@@ -11,8 +11,8 @@ from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-from zenml import step, pipeline, Model, get_step_context
-from zenml.client import Client
+from zenml import ArtifactConfig, step, pipeline, Model, get_step_context
+from zenml.enums import ArtifactType
 from zenml.config import DockerSettings
 from zenml.enums import ModelStages
 
@@ -29,7 +29,7 @@ def create_sample_data() -> Annotated[pd.DataFrame, "sample_data"]:
 
 
 @step
-def train_simple_model(data: pd.DataFrame) -> Annotated[Pipeline, "simple_model"]:
+def train_simple_model(data: pd.DataFrame) -> Annotated[Pipeline, ArtifactConfig(name="simple_tracked_model", artifact_type=ArtifactType.MODEL, tags=["gradient_boosting"])]:
     """Train a simple model on the data."""
     X = data[['feature1', 'feature2']]
     y = data['target']
@@ -63,7 +63,7 @@ def training_pipeline():
 
 
 @step
-def use_model_artifacts(model_artifact: str = "simple_model", data_artifact: str = "sample_data"):
+def use_model_artifacts(model_artifact: str = "simple_tracked_model", data_artifact: str = "sample_data"):
     """Load and use artifacts from the model."""
     zenml_model = get_step_context().model
     

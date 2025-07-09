@@ -7,7 +7,7 @@ This example demonstrates how to create a custom materializer for pandas DataFra
 
 import os
 import json
-from typing import Type, Any, Dict
+from typing import Annotated, Type, Any, Dict
 import pandas as pd
 
 from zenml import step, pipeline
@@ -81,7 +81,7 @@ class CustomPandasMaterializer(BaseMaterializer):
 
 
 @step(output_materializers=CustomPandasMaterializer)
-def create_sample_dataframe() -> pd.DataFrame:
+def create_sample_dataframe() -> Annotated[pd.DataFrame, "sample_dataframe"]:
     """Create a sample DataFrame for demonstration."""
     data = {
         'name': ['Alice', 'Bob', 'Charlie', 'Diana', 'Eve'],
@@ -94,7 +94,7 @@ def create_sample_dataframe() -> pd.DataFrame:
 
 
 @step
-def analyze_dataframe(df: pd.DataFrame) -> Dict[str, Any]:
+def analyze_dataframe(df: pd.DataFrame) -> Annotated[Dict[str, Any], "analysis"]:
     """Analyze the DataFrame and return insights."""
     analysis = {
         'total_employees': len(df),
