@@ -16,6 +16,9 @@ zenml stack set default                          # Full local execution
 zenml stack set zenml-workshop-local-stack      # Remote artifact tracking (recommended)
 zenml stack set zenml-workshop-stack            # Full remote execution
 
+# If you want to build docker images locally
+zenml stack remove-component zenml-workshop-stack -i
+
 # Run Examples
 python 01_basic_pipeline.py
 python 02_artifact_passing.py
